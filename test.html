@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn English Words</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .word-list, .review-section, .quiz-section {
+            margin-top: 20px;
+        }
+        .word-item, .review-item, .quiz-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .word-item h2, .review-item h2 {
+            margin: 0;
+        }
+        .delete-btn, .review-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .review-btn {
+            background-color: #2196F3;
+        }
+        .form-container, .quiz-container {
+            margin-top: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .form-container label, .quiz-container label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .form-container input[type="text"], .quiz-container input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-container button, .quiz-container button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover, .quiz-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Learn English Words</h1>
+    </header>
+    <div class="container">
+        <div class="word-list">
+            <div class="word-item">
+                <h2>Word: <span id="word1">Abundant</span></h2>
+                <p>Meaning: Existing or available in large quantities; plentiful.</p>
+                <button class="delete-btn">Delete</button>
+                <button class="review-btn">Review Today</button>
+            </div>
+            <div class="word-item">
+                <h2>Word: <span id="word2">Benevolent</span></h2>
+                <p>Meaning: Well-meaning and kindly.</p>
+                <button class="delete-btn">Delete</button>
+                <button class="review-btn">Review Today</button>
+            </div>
+            <!-- Add more word items here -->
+        </div>
+        <div class="form-container">
+            <h2>Add a New Word</h2>
+            <form id="wordForm">
+                <label for="word">Word:</label>
+                <input type="text" id="word" name="word" required>
+                <label for="meaning">Meaning:</label>
+                <input type="text" id="meaning" name="meaning" required>
+                <button type="submit">Add Word</button>
+            </form>
+        </div>
+        <div class="review-section">
+            <h2>Review Words</h2>
+            <div id="reviewList">
+                <!-- Review words will appear here -->
+            </div>
+        </div>
+        <div class="quiz-section">
+            <h2>Quiz</h2>
+            <div class="quiz-container" id="quizContainer">
+                <!-- Quiz questions will appear here -->
+            </div>
+            <button id="startQuiz">Start Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('wordForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const wordInput = document.getElementById('word');
+            const meaningInput = document.getElementById('meaning');
+
+            const newWord = wordInput.value;
+            const newMeaning = meaningInput.value;
+
+            const wordList = document.querySelector('.word-list');
+
+            const newWordItem = document.createElement('div');
+            newWordItem.className = 'word-item';
+            newWordItem.innerHTML = `<h2>Word: <span>${newWord}</span></h2><p>Meaning: ${newMeaning}</p><button class="delete-btn">Delete</button><button class="review-btn">Review Today</button>`;
+
+            wordList.appendChild(newWordItem);
+
+            wordInput.value = '';
+            meaningInput.value = '';
+
+            attachEventListeners();
+        });
+
+        function attachEventListeners() {
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.parentElement.remove();
+                });
+            });
+
+            document.querySelectorAll('.review-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const wordItem = this.parentElement;
+                    const word = wordItem.querySelector('span').innerText;
+                    const meaning = wordItem.querySelector('p').innerText.replace('Meaning: ', '');
+
+                    const reviewList = document.getElementById('reviewList');
+
+                    const reviewItem = document.createElement('div');
+                    reviewItem.className = 'review-item';
+                    reviewItem.innerHTML = `<h2>Word: ${word}</h2><p>Meaning: ${meaning}</p><button class="delete-btn">Delete</button>`;
+
+                    reviewList.appendChild(reviewItem);
+                    this.parentElement.remove();
+                    attachEventListeners();
+                });
+            });
+        }
+
+        attachEventListeners();
+
+        document.getElementById('startQuiz').addEventListener('click', function() {
+            const quizContainer = document.getElementById('quizContainer');
+            const reviewItems = document.querySelectorAll('.review-item');
+
+            if (reviewItems.length === 0) {
+                alert('No words to review. Add some words first.');
+                return;
+            }
+
+            quizContainer.innerHTML = '';
+            reviewItems.forEach((item, index) => {
+                const word = item.querySelector('h2').innerText.replace('Word: ', '');
+                const quizItem = document.createElement('div');
+                quizItem.className = 'quiz-item';
+                quizItem.innerHTML = `
+                    <p>What is the meaning of <strong>${word}</strong>?</p>
+                    <input type="text" class="quiz-answer" data-word="${word}">
+                `;
+                quizContainer.appendChild(quizItem);
+            });
+
+            const submitButton = document.createElement('button');
+            submitButton.innerText = 'Submit Quiz';
+            submitButton.addEventListener('click', function() {
+                const answers = document.querySelectorAll('.quiz-answer');
+                let score = 0;
+
+                answers.forEach(answerInput => {
+                    const word = answerInput.dataset.word;
+                    const givenAnswer = answerInput.value.trim();
+                    const reviewItem = Array.from(document.querySelectorAll('.review-item'))
+                        .find(item => item.querySelector('h2').innerText.includes(word));
+                    const correctAnswer = reviewItem ? reviewItem.querySelector('p').innerText.replace('Meaning: ', '') : '';
+
+                    if (givenAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                        score++;
+                    }
+                });
+
+                alert(`Your score: ${score}/${answers.length}`);
+            });
+            quizContainer.appendChild(submitButton);
+        });
+    </script>
+</body>
+</html>
+
